@@ -14,7 +14,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected Dialog onCreateDialog(int id) {
-        switch (id){
+        switch (id) {
             case progressbar_type:
                 progressDialog = new ProgressDialog(this);
                 progressDialog.setMessage("Downloading...");
@@ -79,22 +85,56 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            
+            //show progress bar and call doInBackground
+            showDialog(progressbar_type);
         }
 
         @Override
         protected String doInBackground(String... params) {
+
+            int count;
+            try {
+                URL url = new URL(params[0]);
+                URLConnection connection = url.openConnection();
+                //connection
+                connection.connect();
+
+                int sizeOfFile = connection.getContentLength();
+                InputStream input = new BufferedInputStream(url.openStream(), 10 * 1024);
+                //Output to write
+                OutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory().getPath() + "/jai_go.mp3");
+                byte data[] = new byte[1024];
+                long total = 0;
+                while ((count = input.read(data)) != -1) {
+                    total += count;
+                    //display progress
+                    publishProgress("" + (int) ((total * 100) / sizeOfFile));
+
+                    //write data to file
+                    output.write(data, 0, count);
+                }
+                //flush out
+                output.flush();
+                //close stream
+                output.close();
+                input.close();
+            } catch (Exception e) {
+            }
             return null;
         }
 
         @Override
         protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
+            //percent for download
+            progressDialog.setProgress(Integer.parseInt(values[0]));
         }
 
         @Override
         protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+            //dismiss dialog
+            dismissDialog(progressbar_type);
+            new AlertDialog.Builder(MainActivity.this).setMessage("Downlaod complete").setTitle("Downloaded").show();
+            btnMusicPlay.setEnabled(true);
         }
     }
 }
