@@ -9,10 +9,12 @@ import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -29,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private static final int progressbar_type = 0;
 
-    private static String url = "http://programmerguru.com/android-tutorial/wp-content/uploads/2014/01/jai_ho.mp3";
+    private static String url = "http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_2mb.mp4";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +44,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 btnMusicPlay.setEnabled(false);
-                File file = new File(Environment.getExternalStorageDirectory().getPath() + "/jai_ho.mp3");
-
+                File file = new File(Environment.getExternalStorageDirectory().getPath() + "/vdo.mp4");
+                Log.d("Directory", Environment.getExternalStorageDirectory().getPath() + "/vdo.mp4");
                 //check if file already exist
                 if (file.exists()) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setTitle("Warning...").setMessage("File already exsits").setNeutralButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
+                            btnMusicPlay.setEnabled(true);
                         }
                     });
                     builder.show();
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 int sizeOfFile = connection.getContentLength();
                 InputStream input = new BufferedInputStream(url.openStream(), 10 * 1024);
                 //Output to write
-                OutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory().getPath() + "/jai_go.mp3");
+                OutputStream output = new FileOutputStream(Environment.getExternalStorageDirectory().getPath() + "/vdo.mp4");
                 byte data[] = new byte[1024];
                 long total = 0;
                 while ((count = input.read(data)) != -1) {
