@@ -1,5 +1,6 @@
 package com.example.kotchaphan.asynctask;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.media.MediaPlayer;
@@ -48,13 +49,7 @@ public class MainActivity extends AppCompatActivity {
                     });
                     builder.show();
                 } else {
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setTitle("Warning...").setMessage("File doesn't exsits").setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    });
-                    builder.show();
+
                     //call Async Task onPreExcute state
                     new DownloadMusic().execute(url);
                 }
@@ -62,11 +57,29 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id){
+            case progressbar_type:
+                progressDialog = new ProgressDialog(this);
+                progressDialog.setMessage("Downloading...");
+                progressDialog.setIndeterminate(false);
+                progressDialog.setMax(100);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+                return progressDialog;
+            default:
+                return null;
+        }
+    }
+
     class DownloadMusic extends AsyncTask<String, String, String> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            
         }
 
         @Override
